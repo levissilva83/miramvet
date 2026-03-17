@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Vet Experience | MiramVet+</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #0d2b1e;
+    --forest-mid:#1a3a2e;
+    --forest-lit:#234d3a;
+    --sage:      #3a6b52;
+    --mint:      #4ade80;
+    --mint-dim:  #22c55e;
+    --cream:     #f0ede4;
+    --amber:     #f59e0b;
+    --rose:      #f43f5e;
+    --sky:       #38bdf8;
+    --white:     #ffffff;
+    --text-main: #e8f0eb;
+    --text-dim:  #8aad98;
+    --card-bg:   rgba(26,58,46,0.8);
+    --card-bord: rgba(74,222,128,0.15);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--forest);
+    color: var(--text-main);
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    padding-bottom: 80px;
+  }
+
+  /* ── Background ornament ── */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(74,222,128,.07) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* ── Header ── */
+  .app-header {
+    padding: 20px 20px 0;
+    position: sticky;
+    top: 0;
+    background: rgba(13,43,30,.95);
+    backdrop-filter: blur(20px);
+    z-index: 50;
+    border-bottom: 1px solid var(--card-bord);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+  }
+
+  .logo {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--mint);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--white); }
+  .logo .plus { color: var(--mint); }
+
+  .user-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-bord);
+    padding: 7px 14px;
+    border-radius: 30px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .user-pill .avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--mint), var(--sage));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--forest);
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex-shrink: 0;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    color: var(--text-dim);
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .tab.active {
+    background: rgba(74,222,128,.15);
+    border-color: var(--card-bord);
+    color: var(--mint);
+  }
+  .tab:not(.active):hover { background: var(--forest-lit); color: var(--text-main); }
+
+  /* ── Content ── */
+  .content {
+    padding: 20px;
+  }
+
+  /* ── Pages ── */
+  .page { display: none; animation: fadeIn .25s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+  /* ── Screen: Login ── */
+  #screen-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .login-logo {
+    font-family: var(--font-head);
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--mint);
+    margin-bottom: 8px;
+  }
+  .login-logo span { color: white; }
+
+  .login-tagline {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+
+  .login-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-bord);
+    border-radius: 24px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .login-card h2 {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+  }
+  .input-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .input-group input {
+    width: 100%;
+    background: var(--forest);
+    border: 1px solid var(--card-bord);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .input-group input:focus { border-color: var(--mint); }
+
+  .btn-full {
+    width: 100%;
+    padding: 14px;
+    background: var(--mint);
+    color: var(--forest);
+    border: none;
+    border-radius: 12px;
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    margin-top: 8px;
+  }
+  .btn-full:hover { background: #6ee7a0; transform: translateY(-1px); }
+  .btn-full:active { transform: translateY(0); }
+  .btn-full:disabled { opacity: .5; cursor: default; transform: none; }
+
+  .login-divider {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    position: relative;
+  }
+  .login-divider::before, .login-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 35%;
+    height: 1px;
+    background: var(--card-bord);
+  }
+  .login-divider::before { left: 0; }
+  .login-divider::after { right: 0; }
+
+  .btn-outline {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--mint);
+    border: 1px solid var(--mint);
+    border-radius: 12px;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-outline:hover { background: rgba(74,222,128,.1); }
+
+  /* ── Cards ── */
+  .agenda-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-bord);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 14px;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .agenda-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--cat-color, var(--mint));
+    border-radius: 2px 0 0 2px;
+  }
+  .agenda-card.cat-cirurgia { --cat-color: var(--rose); }
+  .agenda-card.cat-consulta { --cat-color: var(--mint); }
+  .agenda-card.cat-emergencia { --cat-color: var(--amber); }
+  .agenda-card.cat-internacao { --cat-color: var(--sky); }
+  .agenda-card.cat-diagnostico { --cat-color: #a78bfa; }
+
+  .agenda-card:hover { border-color: rgba(74,222,128,.3); transform: translateY(-1px); }
+
+  .agenda-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .agenda-card-title {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .vagas-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(74,222,128,.12);
+    border: 1px solid rgba(74,222,128,.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mint);
+    white-space: nowrap;
+  }
+  .vagas-pill.lotado {
+    background: rgba(245,158,11,.12);
+    border-color: rgba(245,158,11,.2);
+    color: var(--amber);
+  }
+
+  .agenda-card-meta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .agenda-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .btn-checkin {
+    padding: 9px 20px;
+    background: var(--mint);
+    color: var(--forest);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-checkin:hover { background: #6ee7a0; }
+  .btn-checkin:disabled {
+    background: var(--forest-lit);
+    color: var(--text-dim);
+    cursor: default;
+  }
+
+  .price-tag {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--white);
+  }
+  .price-tag small {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: var(--font-body);
+    font-weight: 400;
+    display: block;
+  }
+
+  /* ── My Inscriptions ── */
+  .inscricao-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-bord);
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 12px;
+  }
+
+  .inscricao-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .inscricao-title {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-green  { background: rgba(74,222,128,.15); color: var(--mint); }
+  .badge-amber  { background: rgba(245,158,11,.15);  color: var(--amber); }
+  .badge-rose   { background: rgba(244,63,94,.15);   color: var(--rose); }
+  .badge-blue   { background: rgba(56,189,248,.15);  color: var(--sky); }
+  .badge-gray   { background: rgba(100,116,139,.15); color: #94a3b8; }
+
+  .btn-cancel {
+    padding: 7px 14px;
+    background: rgba(244,63,94,.12);
+    color: var(--rose);
+    border: 1px solid rgba(244,63,94,.2);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-cancel:hover { background: rgba(244,63,94,.2); }
+
+  /* ── Perfil ── */
+  .perfil-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--mint), var(--sage));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800; color: var(--forest);
+    margin-bottom: 12px;
+    font-family: var(--font-head);
+  }
+  .perfil-name {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .perfil-crmv { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; }
+
+  .perfil-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-bord);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .perfil-card h3 {
+    font-family: var(--font-head);
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .perfil-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--card-bord);
+    font-size: 14px;
+  }
+  .perfil-row:last-child { border-bottom: none; }
+  .perfil-row .label { color: var(--text-dim); }
+  .perfil-row .value { font-weight: 600; }
+
+  /* ── Cadastro ── */
+  #screen-register {
+    padding: 24px;
+  }
+  .register-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-dim);
+    cursor: pointer;
+    margin-bottom: 24px;
+    padding: 8px 0;
+  }
+  .register-back:hover { color: var(--mint); }
+
+  /* ── PIX modal ── */
+  .pix-box {
+    background: var(--forest-lit);
+    border: 1px solid rgba(74,222,128,.2);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    margin: 20px 0;
+  }
+  .pix-box .pix-icon { font-size: 40px; margin-bottom: 12px; }
+  .pix-box .pix-value {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--mint);
+    margin: 8px 0;
+  }
+  .pix-key {
+    font-size: 13px;
+    color: var(--text-dim);
+    background: var(--forest);
+    padding: 8px 16px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-top: 8px;
+    font-family: monospace;
+  }
+
+  /* ── Filter ── */
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--card-bord);
+    color: var(--text-dim);
+    background: var(--card-bg);
+    transition: all .2s;
+  }
+  .filter-chip.active {
+    background: rgba(74,222,128,.15);
+    border-color: rgba(74,222,128,.3);
+    color: var(--mint);
+  }
+
+  /* ── Section head ── */
+  .section-head {
+    font-family: var(--font-head);
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* ── Empty ── */
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+  .empty-state .emoji { font-size: 52px; margin-bottom: 16px; }
+  .empty-state h3 { font-family: var(--font-head); font-size: 18px; color: var(--text-main); margin-bottom: 8px; }
+  .empty-state p { font-size: 14px; line-height: 1.6; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(40px);
+    opacity: 0;
+    background: var(--forest-mid);
+    border: 1px solid var(--mint);
+    color: var(--text-main);
+    padding: 13px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    z-index: 999;
+    white-space: nowrap;
+    transition: all .3s;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  #toast.error { border-color: var(--rose); }
+
+  /* ── Bottom Nav ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: rgba(13,43,30,.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--card-bord);
+    display: flex;
+    padding: 8px 0 12px;
+    z-index: 100;
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    padding: 6px 4px;
+    border-radius: 10px;
+    transition: all .2s;
+    color: var(--text-dim);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  .nav-btn .nav-icon { font-size: 22px; line-height: 1; }
+  .nav-btn.active { color: var(--mint); }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.75);
+    z-index: 200;
+    align-items: flex-end;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-sheet {
+    background: var(--forest-mid);
+    border-radius: 24px 24px 0 0;
+    padding: 24px 24px 36px;
+    width: 100%;
+    animation: slideUpSheet .3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  @keyframes slideUpSheet {
+    from { transform: translateY(100%); }
+    to { transform: none; }
+  }
+
+  .sheet-handle {
+    width: 40px; height: 4px;
+    background: var(--sage);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .sheet-title {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .sheet-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 24px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ TELA LOGIN ═══════════ -->
+<div id="screen-login">
+  <div class="login-logo">Miram<span>Vet</span><span class="plus">+</span></div>
+  <div class="login-tagline">Vet Experience<br>Imersão em rotina clínica real</div>
+
+  <div class="login-card">
+    <h2>🩺 Entrar</h2>
+    <div class="input-group">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="seu@email.com">
+    </div>
+    <div class="input-group">
+      <label>CRMV</label>
+      <input type="text" id="login-crmv" placeholder="Ex: SP-12345">
+    </div>
+    <button class="btn-full" id="btn-login" onclick="doLogin()">Entrar</button>
+    <div class="login-divider">ou</div>
+    <button class="btn-outline" onclick="showRegister()">Criar Cadastro</button>
+    <p style="margin-top:16px;font-size:12px;color:var(--text-dim);text-align:center">
+      Para demonstração: use qualquer email e CRMV cadastrados no sistema
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════ TELA CADASTRO ═══════════ -->
+<div id="screen-register" style="display:none">
+  <div class="register-back" onclick="showLogin()">← Voltar</div>
+
+  <div style="margin-bottom:28px">
+    <div style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:6px">Novo Cadastro</div>
+    <div style="font-size:13px;color:var(--text-dim)">Preencha seus dados para participar do Vet Experience</div>
+  </div>
+
+  <div class="input-group">
+    <label>Nome Completo *</label>
+    <input type="text" id="reg-nome" placeholder="Dr(a). Nome Sobrenome">
+  </div>
+  <div class="input-group">
+    <label>Email *</label>
+    <input type="email" id="reg-email" placeholder="seu@email.com">
+  </div>
+  <div class="input-group">
+    <label>Telefone / WhatsApp</label>
+    <input type="tel" id="reg-tel" placeholder="(11) 99999-9999">
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="input-group">
+      <label>CRMV *</label>
+      <input type="text" id="reg-crmv" placeholder="SP-12345">
+    </div>
+    <div class="input-group">
+      <label>Estado *</label>
+      <select id="reg-estado" style="width:100%;background:var(--forest);border:1px solid var(--card-bord);border-radius:12px;padding:12px 16px;color:var(--text-main);font-size:14px;outline:none">
+        <option value="">UF</option>
+        <option>SP</option><option>RJ</option><option>MG</option>
+        <option>RS</option><option>PR</option><option>SC</option>
+        <option>BA</option><option>GO</option><option>DF</option>
+        <option>PE</option><option>CE</option><option>AM</option>
+        <option>PA</option><option>MT</option><option>MS</option>
+        <option>ES</option><option>RN</option><option>PB</option>
+        <option>AL</option><option>SE</option><option>PI</option>
+        <option>MA</option><option>TO</option><option>RO</option>
+        <option>AC</option><option>RR</option><option>AP</option>
+      </select>
+    </div>
+  </div>
+  <div class="input-group">
+    <label>Cidade</label>
+    <input type="text" id="reg-cidade" placeholder="Sua cidade">
+  </div>
+  <div class="input-group">
+    <label>Tempo de Formado</label>
+    <select id="reg-tempo" style="width:100%;background:var(--forest);border:1px solid var(--card-bord);border-radius:12px;padding:12px 16px;color:var(--text-main);font-size:14px;outline:none">
+      <option value="">Selecione</option>
+      <option>Recém formado (menos de 1 ano)</option>
+      <option>1 a 3 anos</option>
+      <option>3 a 5 anos</option>
+      <option>5 a 10 anos</option>
+      <option>Mais de 10 anos</option>
+    </select>
+  </div>
+  <div class="input-group">
+    <label>Área de Interesse</label>
+    <select id="reg-area" style="width:100%;background:var(--forest);border:1px solid var(--card-bord);border-radius:12px;padding:12px 16px;color:var(--text-main);font-size:14px;outline:none">
+      <option value="">Selecione</option>
+      <option>Clínica Geral</option>
+      <option>Cirurgia</option>
+      <option>Emergência e UTI</option>
+      <option>Diagnóstico por Imagem</option>
+      <option>Oncologia</option>
+      <option>Dermatologia</option>
+      <option>Cardiologia</option>
+      <option>Ortopedia</option>
+      <option>Anestesiologia</option>
+    </select>
+  </div>
+  <button class="btn-full" id="btn-register" onclick="doRegister()" style="margin-top:8px">Enviar Cadastro</button>
+  <p style="margin-top:16px;font-size:12px;color:var(--text-dim);text-align:center;line-height:1.6">
+    Após envio, seu cadastro será analisado pela equipe.<br>Você receberá confirmação por email.
+  </p>
+</div>
+
+<!-- ═══════════ APP PRINCIPAL ═══════════ -->
+<div id="screen-app" style="display:none">
+
+  <header class="app-header">
+    <div class="header-top">
+      <div class="logo">Miram<span>Vet</span><span class="plus">+</span></div>
+      <div class="user-pill" onclick="navigate('perfil')">
+        <div class="avatar" id="user-avatar">?</div>
+        <span id="user-name-short">Perfil</span>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="navigate('agenda')">📅 Agenda</div>
+      <div class="tab" onclick="navigate('minhas')">✅ Minhas Inscrições</div>
+      <div class="tab" onclick="navigate('perfil')">👤 Perfil</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ── Agenda ── -->
+    <div class="page active" id="page-agenda">
+      <div class="filter-row" id="filter-row">
+        <div class="filter-chip active" onclick="filterAgenda('')" data-cat="">Todos</div>
+        <div class="filter-chip" onclick="filterAgenda('cirurgia')" data-cat="cirurgia">🔪 Cirurgia</div>
+        <div class="filter-chip" onclick="filterAgenda('consulta')" data-cat="consulta">🩺 Consulta</div>
+        <div class="filter-chip" onclick="filterAgenda('emergencia')" data-cat="emergencia">🚨 Emergência</div>
+        <div class="filter-chip" onclick="filterAgenda('internacao')" data-cat="internacao">🛏 Internação</div>
+        <div class="filter-chip" onclick="filterAgenda('diagnostico')" data-cat="diagnostico">📷 Diagnóstico</div>
+      </div>
+      <div id="agenda-list">
+        <div class="empty-state">
+          <div class="emoji">⏳</div>
+          <h3>Carregando...</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Minhas Inscrições ── -->
+    <div class="page" id="page-minhas">
+      <div class="section-head">Minhas Inscrições</div>
+      <div id="minhas-list">
+        <div class="empty-state">
+          <div class="emoji">📋</div>
+          <h3>Nenhuma inscrição</h3>
+          <p>Faça check-in em um procedimento para aparecer aqui</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Perfil ── -->
+    <div class="page" id="page-perfil">
+      <div style="display:flex;flex-direction:column;align-items:center;padding:20px 0">
+        <div class="perfil-avatar" id="perfil-avatar">?</div>
+        <div class="perfil-name" id="perfil-nome">—</div>
+        <div class="perfil-crmv" id="perfil-crmv">CRMV —</div>
+      </div>
+
+      <div class="perfil-card">
+        <h3>Dados da Conta</h3>
+        <div class="perfil-row">
+          <span class="label">Status</span>
+          <span id="perfil-status"></span>
+        </div>
+        <div class="perfil-row">
+          <span class="label">Plano</span>
+          <span class="value" id="perfil-plano">—</span>
+        </div>
+        <div class="perfil-row">
+          <span class="label">Email</span>
+          <span class="value" id="perfil-email">—</span>
+        </div>
+      </div>
+
+      <div class="perfil-card">
+        <h3>Planos Disponíveis</h3>
+        <div class="perfil-row">
+          <div>
+            <div style="font-weight:600;margin-bottom:2px">Por Procedimento</div>
+            <div style="font-size:12px;color:var(--text-dim)">Acesso avulso</div>
+          </div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--mint)">R$150</div>
+        </div>
+        <div class="perfil-row">
+          <div>
+            <div style="font-weight:600;margin-bottom:2px">Plano Mensal</div>
+            <div style="font-size:12px;color:var(--text-dim)">Acesso à agenda do mês</div>
+          </div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--amber)">R$450</div>
+        </div>
+        <div class="perfil-row">
+          <div>
+            <div style="font-weight:600;margin-bottom:2px">Imersão Intensiva</div>
+            <div style="font-size:12px;color:var(--text-dim)">1-2 dias completos</div>
+          </div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--sky)">R$1200</div>
+        </div>
+      </div>
+
+      <button class="btn-outline" onclick="doLogout()" style="margin-top:8px">Sair da conta</button>
+    </div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <div class="nav-btn active" onclick="navigate('agenda')" id="nav-agenda">
+      <div class="nav-icon">📅</div>
+      <span>Agenda</span>
+    </div>
+    <div class="nav-btn" onclick="navigate('minhas')" id="nav-minhas">
+      <div class="nav-icon">✅</div>
+      <span>Inscrições</span>
+    </div>
+    <div class="nav-btn" onclick="navigate('perfil')" id="nav-perfil">
+      <div class="nav-icon">👤</div>
+      <span>Perfil</span>
+    </div>
+  </nav>
+</div>
+
+<!-- ═══ MODAL: Check-in ═══ -->
+<div class="modal-overlay" id="modal-checkin">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="checkin-titulo">Procedimento</div>
+    <div class="sheet-sub" id="checkin-info">Detalhes do procedimento</div>
+
+    <div style="background:var(--forest-lit);border-radius:12px;padding:16px;margin-bottom:20px">
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:6px">O que você vai aprender:</div>
+      <div style="font-size:13px;line-height:1.7">
+        ✦ Apresentação do caso (anamnese + diagnóstico)<br>
+        ✦ Indicação cirúrgica + exames pré-op<br>
+        ✦ Protocolo anestésico e técnica cirúrgica<br>
+        ✦ Acompanhamento do procedimento real<br>
+        ✦ Discussão de complicações e pós-op
+      </div>
+    </div>
+
+    <div class="pix-box">
+      <div class="pix-icon">💚</div>
+      <div style="font-size:13px;color:var(--text-dim)">Valor do procedimento</div>
+      <div class="pix-value" id="checkin-valor">R$ 150</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Pagamento via PIX</div>
+      <div class="pix-key" id="pix-chave">contato@miramvet.com.br</div>
+    </div>
+
+    <div style="font-size:12px;color:var(--text-dim);text-align:center;margin-bottom:20px;line-height:1.6">
+      ⚠️ Confirme sua inscrição e realize o pagamento.<br>
+      O admin irá confirmar e liberar sua vaga.
+    </div>
+
+    <button class="btn-full" onclick="confirmCheckin()">✅ Confirmar Inscrição</button>
+    <button class="btn-outline" onclick="closeSheet()" style="margin-top:10px">Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══ MODAL: Sucesso ═══ -->
+<div class="modal-overlay" id="modal-sucesso">
+  <div class="modal-sheet" style="text-align:center">
+    <div class="sheet-handle"></div>
+    <div style="font-size:64px;margin:16px 0">🎉</div>
+    <div style="font-family:var(--font-head);font-size:22px;font-weight:800;margin-bottom:10px">Inscrição Realizada!</div>
+    <div style="font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:28px">
+      Sua inscrição foi registrada com sucesso.<br>
+      Realize o pagamento via PIX para confirmar sua vaga.
+    </div>
+    <div class="pix-box" style="text-align:center">
+      <div style="font-size:13px;color:var(--text-dim)">Chave PIX</div>
+      <div class="pix-key" style="margin-top:8px" id="sucesso-pix">contato@miramvet.com.br</div>
+    </div>
+    <button class="btn-full" onclick="closeModal('modal-sucesso')" style="margin-top:20px">Entendido!</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast">✓ <span id="toast-msg"></span></div>
+
+<script>
+// ── Configuração ──
+// COLE A URL DO SEU GOOGLE APPS SCRIPT AQUI:
+const API_URL = localStorage.getItem('vetexp_api_url') || 'https://script.google.com/macros/s/AKfycbwK5S2r-HLVd6v6fY8WbPId_tRMuOj5JWxXvAy-hAnKi0QQCeQXn2AuTtaC-U2BS-Sv6Q/exec';
+
+// ── Estado ──
+const STATE = {
+  vet: null,
+  token: null,
+  agenda: [],
+  inscricoes: [],
+  currentPage: 'agenda',
+  pendingCheckin: null,
+  filterCat: ''
+};
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('vetexp_token');
+  const savedVet = localStorage.getItem('vetexp_vet');
+  if (saved && savedVet) {
+    STATE.token = saved;
+    STATE.vet = JSON.parse(savedVet);
+    showApp();
+    loadAll();
+  } else {
+    showLogin();
+  }
+});
+
+// ── Screens ──
+function showLogin() {
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('screen-register').style.display = 'none';
+  document.getElementById('screen-app').style.display = 'none';
+}
+function showRegister() {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-register').style.display = 'block';
+}
+function showApp() {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-register').style.display = 'none';
+  document.getElementById('screen-app').style.display = 'block';
+  updateUserUI();
+}
+
+function updateUserUI() {
+  if (!STATE.vet) return;
+  const initials = STATE.vet.nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+  document.getElementById('user-avatar').textContent = initials;
+  document.getElementById('perfil-avatar').textContent = initials;
+  document.getElementById('user-name-short').textContent = STATE.vet.nome.split(' ')[0];
+  document.getElementById('perfil-nome').textContent = STATE.vet.nome;
+  document.getElementById('perfil-crmv').textContent = 'CRMV ' + STATE.vet.crmv;
+  document.getElementById('perfil-email').textContent = STATE.vet.email;
+  document.getElementById('perfil-plano').textContent = STATE.vet.plano || 'avulso';
+  document.getElementById('perfil-status').innerHTML = statusBadge(STATE.vet.status);
+}
+
+// ── Navigation ──
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+  
+  const pageEl = document.getElementById('page-' + page);
+  if (pageEl) pageEl.classList.add('active');
+  
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+  
+  STATE.currentPage = page;
+  
+  const tabMap = { agenda: 0, minhas: 1, perfil: 2 };
+  const tabs = document.querySelectorAll('.tab');
+  if (tabMap[page] !== undefined && tabs[tabMap[page]]) tabs[tabMap[page]].classList.add('active');
+  
+  if (page === 'minhas') loadMinhas();
+}
+
+// ── API ──
+async function apiGet(action, params = {}) {
+  const url = new URL(API_URL);
+  url.searchParams.set('action', action);
+  if (STATE.token) url.searchParams.set('token', STATE.token);
+  Object.keys(params).forEach(k => url.searchParams.set(k, params[k]));
+  try {
+    const res = await fetch(url.toString());
+    return await res.json();
+  } catch(e) {
+    return { success: false, error: 'Erro de conexão' };
+  }
+}
+
+async function apiPost(body) {
+  if (STATE.token) body.token = STATE.token;
+  try {
+    const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(body) });
+    return await res.json();
+  } catch(e) {
+    return { success: false, error: 'Erro de conexão' };
+  }
+}
+
+// ── Auth ──
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const crmv = document.getElementById('login-crmv').value.trim();
+  if (!email || !crmv) { showToast('Preencha email e CRMV', true); return; }
+  
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  
+  const result = await apiPost({ action: 'loginVeterinario', email, crmv });
+  btn.disabled = false; btn.textContent = 'Entrar';
+  
+  if (result && result.success) {
+    STATE.token = result.token;
+    STATE.vet = result.veterinario;
+    localStorage.setItem('vetexp_token', result.token);
+    localStorage.setItem('vetexp_vet', JSON.stringify(result.veterinario));
+    showApp();
+    loadAll();
+  } else {
+    showToast(result?.error || 'Erro ao entrar', true);
+  }
+}
+
+async function doRegister() {
+  const nome = document.getElementById('reg-nome').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const crmv = document.getElementById('reg-crmv').value.trim();
+  const estado = document.getElementById('reg-estado').value;
+  
+  if (!nome || !email || !crmv || !estado) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+  
+  const btn = document.getElementById('btn-register');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  
+  const result = await apiPost({
+    action: 'cadastrarVeterinario',
+    nome, email, crmv, estado,
+    telefone: document.getElementById('reg-tel').value,
+    cidade: document.getElementById('reg-cidade').value,
+    tempo_formado: document.getElementById('reg-tempo').value,
+    area_interesse: document.getElementById('reg-area').value
+  });
+  
+  btn.disabled = false; btn.textContent = 'Enviar Cadastro';
+  
+  if (result && result.success) {
+    showToast('Cadastro enviado! Aguarde aprovação por email.');
+    setTimeout(showLogin, 2000);
+  } else {
+    showToast(result?.error || 'Erro ao cadastrar', true);
+  }
+}
+
+function doLogout() {
+  if (!confirm('Sair da conta?')) return;
+  STATE.token = null; STATE.vet = null;
+  localStorage.removeItem('vetexp_token');
+  localStorage.removeItem('vetexp_vet');
+  showLogin();
+}
+
+// ── Agenda ──
+async function loadAll() {
+  await loadAgenda();
+}
+
+async function loadAgenda() {
+  const data = await apiGet('getAgenda');
+  if (!data || !data.success) {
+    document.getElementById('agenda-list').innerHTML = `
+      <div class="empty-state">
+        <div class="emoji">🔗</div>
+        <h3>API não configurada</h3>
+        <p>Configure a URL do Apps Script no painel admin</p>
+      </div>`;
+    return;
+  }
+  STATE.agenda = data.data;
+  renderAgenda(data.data);
+}
+
+function renderAgenda(items) {
+  const container = document.getElementById('agenda-list');
+  const filtered = STATE.filterCat ? items.filter(i => {
+    const proc = i.procedimento_nome || '';
+    // Lookup by procedimento name in procs list or use agenda item directly
+    return true; // show all if no category info in agenda items
+  }) : items;
+  
+  if (!filtered.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="emoji">📅</div>
+        <h3>Sem procedimentos</h3>
+        <p>Nenhum procedimento disponível no momento.<br>Volte em breve!</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const disp = parseInt(item.vagas_total) - parseInt(item.vagas_ocupadas || 0);
+    const lotado = disp <= 0 || item.status === 'lotado';
+    return `
+    <div class="agenda-card">
+      <div class="agenda-card-header">
+        <div class="agenda-card-title">${item.procedimento_nome}</div>
+        <div class="vagas-pill ${lotado ? 'lotado' : ''}">
+          ${lotado ? '🔴 Lotado' : `🟢 ${disp} vagas`}
+        </div>
+      </div>
+      <div class="agenda-card-meta">
+        <div class="meta-item">📅 ${formatDate(item.data)}</div>
+        <div class="meta-item">⏰ ${item.horario}</div>
+        ${item.paciente_especie ? `<div class="meta-item">🐾 ${item.paciente_especie}</div>` : ''}
+        <div class="meta-item">👥 ${item.vagas_total} vagas totais</div>
+      </div>
+      ${item.notas_preparacao ? `<div style="font-size:12px;color:var(--text-dim);background:var(--forest);padding:8px 12px;border-radius:8px;margin-bottom:14px">📌 ${item.notas_preparacao}</div>` : ''}
+      <div class="agenda-card-footer">
+        <div class="price-tag">
+          R$ 150
+          <small>por procedimento</small>
+        </div>
+        <button class="btn-checkin" ${lotado ? 'disabled' : ''} onclick="openCheckin('${item.id}', '${item.procedimento_nome}', '${formatDate(item.data)}', '${item.horario}')">
+          ${lotado ? 'Lotado' : '+ Check-in'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterAgenda(cat) {
+  STATE.filterCat = cat;
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.cat === cat);
+  });
+  renderAgenda(STATE.agenda);
+}
+
+// ── Minhas Inscrições ──
+async function loadMinhas() {
+  if (!STATE.token) return;
+  const data = await apiGet('getInscricoes');
+  if (!data || !data.success) return;
+  STATE.inscricoes = data.data;
+  
+  const container = document.getElementById('minhas-list');
+  if (!data.data.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="emoji">📋</div>
+        <h3>Nenhuma inscrição</h3>
+        <p>Faça check-in em procedimentos<br>na aba Agenda</p>
+      </div>`;
+    return;
+  }
+  
+  container.innerHTML = data.data.map(i => `
+    <div class="inscricao-card">
+      <div class="inscricao-card-header">
+        <div>
+          <div class="inscricao-title">Procedimento</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-top:2px">${formatDate(i.data_inscricao)}</div>
+        </div>
+        ${statusBadge(i.status)}
+      </div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:14px">
+        ID: <code style="background:var(--forest);padding:2px 6px;border-radius:4px">${i.id}</code>
+      </div>
+      ${i.status === 'pendente_pagamento' ? `
+        <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:12px;font-size:13px;margin-bottom:12px">
+          ⏳ Aguardando confirmação de pagamento.<br>
+          <strong>PIX:</strong> contato@miramvet.com.br
+        </div>` : ''}
+      ${i.status !== 'cancelado' && i.status !== 'presente' && i.status !== 'realizado' ? `
+        <div style="text-align:right">
+          <button class="btn-cancel" onclick="cancelar('${i.id}')">Cancelar inscrição</button>
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ── Check-in ──
+function openCheckin(agendaId, nome, data, horario) {
+  STATE.pendingCheckin = agendaId;
+  document.getElementById('checkin-titulo').textContent = nome;
+  document.getElementById('checkin-info').textContent = `📅 ${data} às ${horario}`;
+  document.getElementById('modal-checkin').classList.add('open');
+}
+
+async function confirmCheckin() {
+  if (!STATE.pendingCheckin) return;
+  
+  const result = await apiPost({ action: 'fazerCheckin', agenda_id: STATE.pendingCheckin });
+  closeSheet();
+  
+  if (result && result.success) {
+    document.getElementById('sucesso-pix').textContent = 'contato@miramvet.com.br';
+    document.getElementById('modal-sucesso').classList.add('open');
+    loadAgenda();
+  } else {
+    showToast(result?.error || 'Erro ao fazer check-in', true);
+  }
+}
+
+async function cancelar(inscId) {
+  if (!confirm('Cancelar esta inscrição?')) return;
+  const result = await apiPost({ action: 'cancelarInscricao', inscricao_id: inscId });
+  if (result && result.success) { showToast('Inscrição cancelada'); loadMinhas(); }
+  else showToast(result?.error || 'Erro', true);
+}
+
+function closeSheet() { document.getElementById('modal-checkin').classList.remove('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── Helpers ──
+function formatDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('pt-BR'); } catch(e) { return String(d); }
+}
+
+function statusBadge(s) {
+  const map = {
+    'ativo': ['badge-green', '✓ Ativo'],
+    'pendente': ['badge-amber', '⏳ Pendente'],
+    'inativo': ['badge-gray', 'Inativo'],
+    'confirmado': ['badge-green', '✓ Confirmado'],
+    'pendente_pagamento': ['badge-amber', '💰 Ag. Pagamento'],
+    'presente': ['badge-blue', '✓ Presente'],
+    'cancelado': ['badge-rose', '✕ Cancelado'],
+  };
+  const [cls, label] = map[s] || ['badge-gray', s];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+let toastTimer;
+function showToast(msg, error = false) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'show' + (error ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = '', 3500);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
