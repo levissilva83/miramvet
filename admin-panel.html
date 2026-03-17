@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiramVet+ Admin | Vet Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:    #0d2b1e;
+    --forest-mid:#1a3a2e;
+    --forest-lit:#234d3a;
+    --sage:      #3a6b52;
+    --mint:      #4ade80;
+    --mint-dim:  #22c55e;
+    --cream:     #f0ede4;
+    --cream-dim: #d4cfc4;
+    --amber:     #f59e0b;
+    --rose:      #f43f5e;
+    --sky:       #38bdf8;
+    --white:     #ffffff;
+    --text-main: #e8f0eb;
+    --text-dim:  #8aad98;
+    --card-bg:   rgba(26,58,46,0.75);
+    --card-bord: rgba(74,222,128,0.12);
+    --glow:      rgba(74,222,128,0.08);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--forest);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: var(--forest-mid);
+    border-right: 1px solid var(--card-bord);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0; top: 0;
+    z-index: 100;
+    transition: transform .3s;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--card-bord);
+  }
+  .sidebar-logo .brand {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--mint);
+    letter-spacing: -0.5px;
+  }
+  .sidebar-logo .brand span { color: var(--white); }
+  .sidebar-logo .sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .sidebar-nav {
+    padding: 20px 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 12px 12px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dim);
+    transition: all .2s;
+    border: 1px solid transparent;
+  }
+  .nav-item:hover { background: var(--forest-lit); color: var(--text-main); }
+  .nav-item.active {
+    background: rgba(74,222,128,0.12);
+    border-color: var(--card-bord);
+    color: var(--mint);
+  }
+  .nav-item .icon { font-size: 18px; width: 22px; text-align: center; }
+  .nav-item .badge {
+    margin-left: auto;
+    background: var(--rose);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--card-bord);
+  }
+  .sidebar-footer .admin-info {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .sidebar-footer .admin-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  /* ── Main ── */
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    background: rgba(13,43,30,0.8);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--card-bord);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-title {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .topbar-actions { display: flex; gap: 12px; align-items: center; }
+
+  .api-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-dim);
+    background: var(--card-bg);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--card-bord);
+  }
+  .api-status .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--mint);
+    animation: pulse 2s infinite;
+  }
+  .api-status.offline .dot { background: var(--rose); animation: none; }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+
+  .content {
+    padding: 32px;
+    flex: 1;
+  }
+
+  /* ── Páginas ── */
+  .page { display: none; animation: fadeIn .3s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+  /* ── Cards KPI ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .kpi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-bord);
+    border-radius: 16px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, border-color .2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); border-color: rgba(74,222,128,0.3); }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent, var(--mint));
+    border-radius: 16px 16px 0 0;
+  }
+  .kpi-card.amber { --accent: var(--amber); }
+  .kpi-card.rose  { --accent: var(--rose); }
+  .kpi-card.sky   { --accent: var(--sky); }
+
+  .kpi-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: var(--font-head);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1;
+  }
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+  .kpi-icon {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    font-size: 28px;
+    opacity: .25;
+  }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 32px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all .2s;
+  }
+  .btn-primary {
+    background: var(--mint);
+    color: var(--forest);
+  }
+  .btn-primary:hover { background: #6ee7a0; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--card-bord);
+  }
+  .btn-ghost:hover { background: var(--forest-lit); color: var(--text-main); }
+  .btn-danger {
+    background: rgba(244,63,94,0.15);
+    color: var(--rose);
+    border: 1px solid rgba(244,63,94,0.25);
+  }
+  .btn-danger:hover { background: rgba(244,63,94,0.25); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+
+  /* ── Table ── */
+  .table-wrap {
+    background: var(--card-bg);
+    border: 1px solid var(--card-bord);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: rgba(26,58,46,0.8); }
+  th {
+    padding: 13px 16px;
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+  td {
+    padding: 13px 16px;
+    font-size: 13px;
+    border-top: 1px solid var(--card-bord);
+    vertical-align: middle;
+  }
+  tbody tr { transition: background .15s; }
+  tbody tr:hover { background: rgba(74,222,128,0.04); }
+
+  /* ── Badge ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  .badge-green  { background: rgba(74,222,128,.15); color: var(--mint); }
+  .badge-amber  { background: rgba(245,158,11,.15);  color: var(--amber); }
+  .badge-rose   { background: rgba(244,63,94,.15);   color: var(--rose); }
+  .badge-blue   { background: rgba(56,189,248,.15);  color: var(--sky); }
+  .badge-gray   { background: rgba(100,116,139,.15); color: #94a3b8; }
+
+  /* ── Form ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--forest-mid);
+    border: 1px solid var(--card-bord);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp .3s ease;
+  }
+  @keyframes slideUp {
+    from { opacity:0; transform:translateY(20px); }
+    to   { opacity:1; transform:none; }
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--forest-lit);
+    border: none;
+    color: var(--text-dim);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: var(--sage); color: white; }
+  .modal-title {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+
+  .form-grid { display: grid; gap: 16px; }
+  .form-grid-2 { grid-template-columns: 1fr 1fr; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: var(--forest);
+    border: 1px solid var(--card-bord);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--mint); }
+  .form-group input::placeholder { color: var(--text-dim); opacity: .6; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  /* ── Config API ── */
+  .api-config-box {
+    background: var(--card-bg);
+    border: 1px solid var(--card-bord);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .api-config-box h3 {
+    font-family: var(--font-head);
+    font-size: 15px;
+    margin-bottom: 16px;
+    color: var(--mint);
+  }
+  .api-url-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .api-url-row input {
+    flex: 1;
+    background: var(--forest);
+    border: 1px solid var(--card-bord);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text-main);
+    font-family: monospace;
+    font-size: 13px;
+    outline: none;
+  }
+  .api-url-row input:focus { border-color: var(--mint); }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--forest-mid);
+    border: 1px solid var(--mint);
+    color: var(--text-main);
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all .3s;
+    max-width: 340px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  #toast.show { transform: none; opacity: 1; }
+  #toast.error { border-color: var(--rose); }
+
+  /* ── Empty state ── */
+  .empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+  .empty .emoji { font-size: 48px; margin-bottom: 16px; }
+  .empty p { font-size: 14px; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--forest); }
+  ::-webkit-scrollbar-thumb { background: var(--sage); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-260px); }
+    .sidebar.open { transform: none; }
+    .main { margin-left: 0; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .form-grid-2 { grid-template-columns: 1fr; }
+    .content { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">Miram<span>Vet</span><span style="color:var(--mint)">+</span></div>
+    <div class="sub">Painel Administrativo</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Visão Geral</div>
+    <div class="nav-item active" onclick="navigate('dashboard')">
+      <span class="icon">📊</span> Dashboard
+    </div>
+
+    <div class="nav-section-label">Programa</div>
+    <div class="nav-item" onclick="navigate('agenda')">
+      <span class="icon">📅</span> Agenda
+    </div>
+    <div class="nav-item" onclick="navigate('inscricoes')">
+      <span class="icon">✅</span> Inscrições
+      <span class="badge" id="badge-pendentes">0</span>
+    </div>
+    <div class="nav-item" onclick="navigate('procedimentos')">
+      <span class="icon">🔬</span> Procedimentos
+    </div>
+
+    <div class="nav-section-label">Participantes</div>
+    <div class="nav-item" onclick="navigate('veterinarios')">
+      <span class="icon">👨‍⚕️</span> Veterinários
+    </div>
+    <div class="nav-item" onclick="navigate('pagamentos')">
+      <span class="icon">💰</span> Pagamentos
+    </div>
+
+    <div class="nav-section-label">Configurações</div>
+    <div class="nav-item" onclick="navigate('config')">
+      <span class="icon">⚙️</span> Configurações API
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-info">Administrador</div>
+    <div class="admin-name">MiramVet+</div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <header class="topbar">
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-actions">
+      <div class="api-status offline" id="api-status">
+        <div class="dot"></div>
+        <span id="api-status-text">Sem API</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ═══════════ DASHBOARD ═══════════ -->
+    <div class="page active" id="page-dashboard">
+      <div class="kpi-grid" id="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-icon">👨‍⚕️</span>
+          <div class="kpi-label">Veterinários</div>
+          <div class="kpi-value" id="kpi-vets">—</div>
+          <div class="kpi-sub">cadastrados</div>
+        </div>
+        <div class="kpi-card amber">
+          <span class="kpi-icon">📅</span>
+          <div class="kpi-label">Agenda Futura</div>
+          <div class="kpi-value" id="kpi-agenda">—</div>
+          <div class="kpi-sub">procedimentos</div>
+        </div>
+        <div class="kpi-card sky">
+          <span class="kpi-icon">✅</span>
+          <div class="kpi-label">Inscrições Conf.</div>
+          <div class="kpi-value" id="kpi-insc">—</div>
+          <div class="kpi-sub">confirmadas</div>
+        </div>
+        <div class="kpi-card rose">
+          <span class="kpi-icon">⏳</span>
+          <div class="kpi-label">Aguard. Pagamento</div>
+          <div class="kpi-value" id="kpi-pend">—</div>
+          <div class="kpi-sub">pendentes</div>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-icon">💰</span>
+          <div class="kpi-label">Receita Total</div>
+          <div class="kpi-value" id="kpi-rec">—</div>
+          <div class="kpi-sub">confirmada</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">📅 Próximos Procedimentos</div>
+          <button class="btn btn-primary btn-sm" onclick="navigate('agenda')">Ver Agenda Completa</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Procedimento</th>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Vagas</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="dash-agenda-tbody">
+              <tr><td colspan="5"><div class="empty"><div class="emoji">🔄</div><p>Carregando...</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ AGENDA ═══════════ -->
+    <div class="page" id="page-agenda">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">📅 Agenda de Procedimentos</div>
+          <button class="btn btn-primary" onclick="openModal('modal-agenda')">+ Novo Procedimento</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Procedimento</th>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Vagas Disp.</th>
+                <th>Paciente</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="agenda-tbody">
+              <tr><td colspan="7"><div class="empty"><p>Configure a API para carregar dados</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ INSCRIÇÕES ═══════════ -->
+    <div class="page" id="page-inscricoes">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">✅ Gerenciar Inscrições</div>
+          <div style="display:flex;gap:10px">
+            <select id="filter-status" onchange="filterInscricoes()" style="background:var(--card-bg);border:1px solid var(--card-bord);color:var(--text-main);padding:8px 12px;border-radius:10px;font-size:13px;cursor:pointer;">
+              <option value="">Todos os status</option>
+              <option value="pendente_pagamento">Pendente Pagamento</option>
+              <option value="confirmado">Confirmado</option>
+              <option value="presente">Presente</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" onclick="loadInscricoes()">↻ Atualizar</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Veterinário</th>
+                <th>CRMV</th>
+                <th>Procedimento</th>
+                <th>Data Inscrição</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="inscricoes-tbody">
+              <tr><td colspan="6"><div class="empty"><p>Configure a API para carregar dados</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ PROCEDIMENTOS ═══════════ -->
+    <div class="page" id="page-procedimentos">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">🔬 Tipos de Procedimentos</div>
+          <button class="btn btn-primary" onclick="openModal('modal-novo-proc')">+ Novo Procedimento</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Duração</th>
+                <th>Vagas</th>
+                <th>Preço</th>
+                <th>Nível</th>
+                <th>Ativo</th>
+              </tr>
+            </thead>
+            <tbody id="proc-tbody">
+              <tr><td colspan="8"><div class="empty"><p>Configure a API para carregar dados</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ VETERINÁRIOS ═══════════ -->
+    <div class="page" id="page-veterinarios">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">👨‍⚕️ Veterinários Cadastrados</div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <input type="text" id="search-vet" placeholder="Buscar por nome ou CRMV..." onkeyup="filterVets()"
+              style="background:var(--card-bg);border:1px solid var(--card-bord);color:var(--text-main);padding:9px 14px;border-radius:10px;font-size:13px;width:240px;">
+            <button class="btn btn-ghost btn-sm" onclick="loadVeterinarios()">↻ Atualizar</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>CRMV</th>
+                <th>Cidade</th>
+                <th>Tempo Formado</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="vet-tbody">
+              <tr><td colspan="7"><div class="empty"><p>Configure a API para carregar dados</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ PAGAMENTOS ═══════════ -->
+    <div class="page" id="page-pagamentos">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">💰 Confirmar Pagamentos</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Veterinário</th>
+                <th>Inscrição</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="pag-tbody">
+              <tr><td colspan="5"><div class="empty"><p>Configure a API para carregar dados</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ CONFIG ═══════════ -->
+    <div class="page" id="page-config">
+      <div class="api-config-box">
+        <h3>🔗 Configuração da API (Google Apps Script)</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;">
+          Cole aqui a URL do seu Web App do Google Apps Script após fazer o deploy.
+        </p>
+        <div class="api-url-row">
+          <input type="text" id="api-url-input" placeholder="https://script.google.com/macros/s/SEU_ID/exec">
+          <button class="btn btn-primary" onclick="saveApiUrl()">💾 Salvar</button>
+          <button class="btn btn-ghost" onclick="testApi()">🧪 Testar</button>
+        </div>
+        <div id="api-test-result" style="margin-top:12px;font-size:13px;"></div>
+      </div>
+
+      <div class="api-config-box">
+        <h3>📋 Como configurar passo a passo</h3>
+        <div style="font-size:13px;color:var(--text-dim);line-height:1.8;">
+          <p><strong style="color:var(--mint)">1.</strong> Abra o Google Sheets e vá em <strong>Extensões → Apps Script</strong></p>
+          <p><strong style="color:var(--mint)">2.</strong> Cole o conteúdo do arquivo <code style="background:var(--forest);padding:2px 6px;border-radius:4px;">google-apps-script.js</code></p>
+          <p><strong style="color:var(--mint)">3.</strong> Execute a função <code style="background:var(--forest);padding:2px 6px;border-radius:4px;">setupDatabase()</code> para criar todas as tabelas</p>
+          <p><strong style="color:var(--mint)">4.</strong> Vá em <strong>Implantar → Nova implantação → App da Web</strong></p>
+          <p><strong style="color:var(--mint)">5.</strong> Configure: Executar como <strong>Eu</strong>, Quem acessa <strong>Qualquer pessoa</strong></p>
+          <p><strong style="color:var(--mint)">6.</strong> Copie a URL e cole no campo acima</p>
+          <p><strong style="color:var(--mint)">7.</strong> Cole a mesma URL no arquivo do App do Veterinário</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══════════ MODAL: Nova Agenda ═══════════ -->
+<div class="modal-overlay" id="modal-agenda">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-agenda')">✕</button>
+    <div class="modal-title">📅 Adicionar à Agenda</div>
+    <div class="form-grid">
+      <div class="form-grid form-grid-2">
+        <div class="form-group">
+          <label>Procedimento</label>
+          <select id="agenda-proc-id" onchange="fillProcInfo()">
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Espécie do Paciente</label>
+          <select id="agenda-especie">
+            <option value="cão">🐕 Cão</option>
+            <option value="gato">🐈 Gato</option>
+            <option value="exótico">🦎 Exótico</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="agenda-data">
+        </div>
+        <div class="form-group">
+          <label>Horário</label>
+          <input type="time" id="agenda-horario" value="09:00">
+        </div>
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="form-group">
+          <label>Vagas Totais</label>
+          <input type="number" id="agenda-vagas" value="4" min="1" max="10">
+        </div>
+        <div class="form-group">
+          <label>ID do Procedimento</label>
+          <input type="text" id="agenda-proc-id-display" readonly style="opacity:.6">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notas de Preparação (opcional)</label>
+        <textarea id="agenda-notas" placeholder="Ex: Trazer jaleco, jejum obrigatório..."></textarea>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn btn-ghost" onclick="closeModal('modal-agenda')">Cancelar</button>
+        <button class="btn btn-primary" onclick="createAgenda()">✅ Criar na Agenda</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL: Confirmar Pagamento ═══════════ -->
+<div class="modal-overlay" id="modal-pagamento">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-pagamento')">✕</button>
+    <div class="modal-title">💰 Confirmar Pagamento</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>ID da Inscrição</label>
+        <input type="text" id="pag-inscricao-id" readonly style="opacity:.6">
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="form-group">
+          <label>Valor (R$)</label>
+          <input type="number" id="pag-valor" placeholder="150">
+        </div>
+        <div class="form-group">
+          <label>Método</label>
+          <select id="pag-metodo">
+            <option value="pix">PIX</option>
+            <option value="cartao">Cartão</option>
+            <option value="transferencia">Transferência</option>
+            <option value="boleto">Boleto</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn btn-ghost" onclick="closeModal('modal-pagamento')">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmPayment()">✅ Confirmar Pagamento</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL: Novo Procedimento ═══════════ -->
+<div class="modal-overlay" id="modal-novo-proc">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-novo-proc')">✕</button>
+    <div class="modal-title">🔬 Cadastrar Procedimento</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nome do Procedimento *</label>
+        <input type="text" id="proc-nome" placeholder="Ex: Ovariohisterectomia">
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="form-group">
+          <label>Categoria *</label>
+          <select id="proc-cat">
+            <option value="">Selecione...</option>
+            <option value="cirurgia">🔪 Cirurgia</option>
+            <option value="consulta">🩺 Consulta</option>
+            <option value="emergencia">🚨 Emergência</option>
+            <option value="internacao">🛏 Internação</option>
+            <option value="diagnostico">📷 Diagnóstico</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nível de Complexidade</label>
+          <select id="proc-nivel">
+            <option value="basico">Básico</option>
+            <option value="intermediario">Intermediário</option>
+            <option value="avancado">Avançado</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-grid form-grid-2">
+        <div class="form-group">
+          <label>Duração (minutos)</label>
+          <input type="number" id="proc-dur" value="60" min="15" max="480">
+        </div>
+        <div class="form-group">
+          <label>Vagas Padrão</label>
+          <input type="number" id="proc-vagas" value="4" min="1" max="20">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Preço Avulso (R$)</label>
+        <input type="number" id="proc-preco" value="150" min="0" step="10">
+      </div>
+      <div class="form-group">
+        <label>Descrição (opcional)</label>
+        <textarea id="proc-desc" placeholder="Descreva o procedimento..."></textarea>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn btn-ghost" onclick="closeModal('modal-novo-proc')">Cancelar</button>
+        <button class="btn btn-primary" onclick="createProcedimento()">✅ Cadastrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast">✓ <span id="toast-msg"></span></div>
+
+<script>
+// ── Estado ──
+const STATE = {
+  apiUrl: localStorage.getItem('vetexp_api_url') || 'https://script.google.com/macros/s/AKfycbz3i9O5K41jDJAyd5LeYLvLDnC6UJ7k4e3HSBUKCo7v02KFN1DoE0RLcV4CNajGtY8aNQ/exec',
+  procedimentos: [],
+  agenda: [],
+  inscricoes: [],
+  veterinarios: [],
+  currentPage: 'dashboard',
+  pendingPayment: null
+};
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', () => {
+  if (STATE.apiUrl) {
+    document.getElementById('api-url-input').value = STATE.apiUrl;
+    updateApiStatus(true);
+    loadDashboard();
+    loadProcedimentos();
+  } else {
+    navigate('config');
+  }
+});
+
+// ── Navigation ──
+function navigate(page) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  
+  const pageEl = document.getElementById('page-' + page);
+  if (pageEl) pageEl.classList.add('active');
+  
+  const navEl = document.querySelector(`[onclick="navigate('${page}')"]`);
+  if (navEl) navEl.classList.add('active');
+  
+  const titles = {
+    dashboard: 'Dashboard',
+    agenda: 'Agenda de Procedimentos',
+    inscricoes: 'Gerenciar Inscrições',
+    procedimentos: 'Tipos de Procedimentos',
+    veterinarios: 'Veterinários',
+    pagamentos: 'Pagamentos',
+    config: 'Configurações'
+  };
+  document.getElementById('page-title').textContent = titles[page] || page;
+  STATE.currentPage = page;
+  
+  if (page === 'dashboard') loadDashboard();
+  if (page === 'agenda') loadAgenda();
+  if (page === 'inscricoes') loadInscricoes();
+  if (page === 'procedimentos') loadProcedimentos();
+  if (page === 'veterinarios') loadVeterinarios();
+  if (page === 'pagamentos') loadPagamentos();
+}
+
+// ── API calls ──
+async function apiGet(action, params = {}) {
+  if (!STATE.apiUrl) { showToast('Configure a URL da API primeiro!', true); return null; }
+  const url = new URL(STATE.apiUrl);
+  url.searchParams.set('action', action);
+  Object.keys(params).forEach(k => url.searchParams.set(k, params[k]));
+  const res = await fetch(url.toString());
+  return await res.json();
+}
+
+async function apiPost(body) {
+  if (!STATE.apiUrl) { showToast('Configure a URL da API primeiro!', true); return null; }
+  const res = await fetch(STATE.apiUrl, {
+    method: 'POST',
+    body: JSON.stringify(body)
+  });
+  return await res.json();
+}
+
+// ── Loaders ──
+async function loadDashboard() {
+  const data = await apiGet('getStats');
+  if (!data || !data.success) return;
+  const s = data.data;
+  document.getElementById('kpi-vets').textContent = s.total_veterinarios;
+  document.getElementById('kpi-agenda').textContent = s.agenda_futura;
+  document.getElementById('kpi-insc').textContent = s.inscricoes_confirmadas;
+  document.getElementById('kpi-pend').textContent = s.inscricoes_pendentes;
+  document.getElementById('kpi-rec').textContent = 'R$ ' + (s.receita_total || 0).toLocaleString('pt-BR');
+  document.getElementById('badge-pendentes').textContent = s.inscricoes_pendentes || 0;
+
+  const agendaData = await apiGet('getAgenda');
+  if (agendaData && agendaData.success) {
+    const tbody = document.getElementById('dash-agenda-tbody');
+    const items = agendaData.data.slice(0, 5);
+    if (!items.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="emoji">📅</div><p>Nenhum procedimento agendado</p></div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = items.map(i => `
+      <tr>
+        <td><strong>${i.procedimento_nome}</strong></td>
+        <td>${formatDate(i.data)}</td>
+        <td>${i.horario}</td>
+        <td>${i.vagas_disponiveis || (i.vagas_total - i.vagas_ocupadas)} / ${i.vagas_total}</td>
+        <td>${statusBadge(i.status)}</td>
+      </tr>
+    `).join('');
+  }
+}
+
+async function loadAgenda() {
+  const data = await apiGet('getAgenda');
+  const tbody = document.getElementById('agenda-tbody');
+  if (!data || !data.success || !data.data.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="emoji">📅</div><p>Nenhum procedimento agendado</p></div></td></tr>`;
+    return;
+  }
+  STATE.agenda = data.data;
+  tbody.innerHTML = data.data.map(i => `
+    <tr>
+      <td><strong>${i.procedimento_nome}</strong></td>
+      <td>${formatDate(i.data)}</td>
+      <td>${i.horario}</td>
+      <td>${(i.vagas_total - i.vagas_ocupadas)} / ${i.vagas_total}</td>
+      <td>${i.paciente_especie || '—'}</td>
+      <td>${statusBadge(i.status)}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="copyLink('${i.id}')">🔗 Link</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function loadProcedimentos() {
+  const data = await apiGet('getProcedimentos');
+  if (!data || !data.success) return;
+  STATE.procedimentos = data.data;
+
+  // Preenche select do modal de agenda
+  const sel = document.getElementById('agenda-proc-id');
+  sel.innerHTML = '<option value="">Selecione...</option>' + data.data.map(p =>
+    `<option value="${p.id}" data-vagas="${p.vagas_total}">${p.nome}</option>`
+  ).join('');
+
+  const tbody = document.getElementById('proc-tbody');
+  if (!data.data.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><p>Nenhum procedimento cadastrado</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.data.map(p => `
+    <tr>
+      <td><code style="font-size:11px;background:var(--forest);padding:3px 8px;border-radius:6px;">${p.id}</code></td>
+      <td><strong>${p.nome}</strong></td>
+      <td>${catBadge(p.categoria)}</td>
+      <td>${p.duracao_minutos} min</td>
+      <td>${p.vagas_total}</td>
+      <td>R$ ${p.preco_avulso}</td>
+      <td>${levelBadge(p.nivel_complexidade)}</td>
+      <td>${p.ativo == 'true' || p.ativo == true ? '<span class="badge badge-green">✓ Ativo</span>' : '<span class="badge badge-gray">Inativo</span>'}</td>
+    </tr>
+  `).join('');
+}
+
+async function loadInscricoes() {
+  const data = await apiGet('getAllInscricoes');
+  const tbody = document.getElementById('inscricoes-tbody');
+  if (!data || !data.success || !data.data.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="emoji">📋</div><p>Nenhuma inscrição ainda</p></div></td></tr>`;
+    return;
+  }
+  STATE.inscricoes = data.data;
+  renderInscricoes(data.data);
+}
+
+function renderInscricoes(items) {
+  const tbody = document.getElementById('inscricoes-tbody');
+  const filter = document.getElementById('filter-status').value;
+  const filtered = filter ? items.filter(i => i.status === filter) : items;
+  
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><p>Nenhuma inscrição com este filtro</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(i => `
+    <tr>
+      <td><strong>${i.veterinario_nome}</strong><br><small style="color:var(--text-dim)">${i.veterinario_email}</small></td>
+      <td>${i.veterinario_crmv}</td>
+      <td><small style="color:var(--text-dim)">${i.agenda_id}</small></td>
+      <td>${formatDate(i.data_inscricao)}</td>
+      <td>${statusBadge(i.status)}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        ${i.status === 'pendente_pagamento' ? `<button class="btn btn-primary btn-sm" onclick="openPaymentModal('${i.id}', '${i.veterinario_id}', '${i.veterinario_nome}')">💰 Pagar</button>` : ''}
+        ${i.status === 'confirmado' ? `<button class="btn btn-ghost btn-sm" onclick="confirmPresence('${i.id}')">✅ Presença</button>` : ''}
+        ${i.status !== 'cancelado' && i.status !== 'presente' ? `<button class="btn btn-danger btn-sm" onclick="cancelInscricao('${i.id}')">✕</button>` : ''}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterInscricoes() {
+  renderInscricoes(STATE.inscricoes);
+}
+
+async function loadVeterinarios() {
+  const data = await apiGet('getAllVeterinarios');
+  const tbody = document.getElementById('vet-tbody');
+  if (!data || !data.success || !data.data.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="emoji">👨‍⚕️</div><p>Nenhum veterinário cadastrado</p></div></td></tr>`;
+    return;
+  }
+  STATE.veterinarios = data.data;
+  renderVets(data.data);
+}
+
+function renderVets(items) {
+  const tbody = document.getElementById('vet-tbody');
+  const q = (document.getElementById('search-vet').value || '').toLowerCase();
+  const filtered = q ? items.filter(v => v.nome.toLowerCase().includes(q) || String(v.crmv).toLowerCase().includes(q)) : items;
+  tbody.innerHTML = filtered.map(v => `
+    <tr>
+      <td><strong>${v.nome}</strong></td>
+      <td><small>${v.email}</small></td>
+      <td>${v.crmv}</td>
+      <td>${v.cidade || '—'}</td>
+      <td>${v.tempo_formado || '—'}</td>
+      <td>${statusBadge(v.status)}</td>
+      <td>
+        ${v.status === 'pendente' ? `<button class="btn btn-primary btn-sm" onclick="approveVet('${v.id}')">✅ Aprovar</button>` : ''}
+        ${v.status === 'ativo' ? `<button class="btn btn-danger btn-sm" onclick="deactivateVet('${v.id}')">🚫 Desativar</button>` : ''}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterVets() { renderVets(STATE.veterinarios); }
+
+async function loadPagamentos() {
+  const data = await apiGet('getAllInscricoes');
+  const tbody = document.getElementById('pag-tbody');
+  if (!data || !data.success) return;
+  
+  const pendentes = data.data.filter(i => i.status === 'pendente_pagamento');
+  if (!pendentes.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="emoji">💰</div><p>Nenhum pagamento pendente</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = pendentes.map(i => `
+    <tr>
+      <td><strong>${i.veterinario_nome}</strong><br><small style="color:var(--text-dim)">${i.veterinario_email}</small></td>
+      <td><code style="font-size:11px;background:var(--forest);padding:3px 8px;border-radius:6px;">${i.id}</code></td>
+      <td>R$ —</td>
+      <td><span class="badge badge-amber">⏳ Pendente</span></td>
+      <td>
+        <button class="btn btn-primary btn-sm" onclick="openPaymentModal('${i.id}', '${i.veterinario_id}', '${i.veterinario_nome}')">💰 Confirmar</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ── Actions ──
+async function createAgenda() {
+  const procId = document.getElementById('agenda-proc-id').value;
+  const data = document.getElementById('agenda-data').value;
+  const horario = document.getElementById('agenda-horario').value;
+  const vagas = document.getElementById('agenda-vagas').value;
+  const notas = document.getElementById('agenda-notas').value;
+  const especie = document.getElementById('agenda-especie').value;
+  
+  if (!procId || !data || !horario) { showToast('Preencha todos os campos obrigatórios', true); return; }
+  
+  const result = await apiPost({ action: 'criarAgenda', procedimento_id: procId, data, horario, vagas_total: parseInt(vagas), notas_preparacao: notas, paciente_especie: especie, criado_por: 'admin' });
+  if (result && result.success) {
+    showToast('Procedimento adicionado à agenda!');
+    closeModal('modal-agenda');
+    loadAgenda();
+  } else {
+    showToast(result?.error || 'Erro ao criar agenda', true);
+  }
+}
+
+function fillProcInfo() {
+  const sel = document.getElementById('agenda-proc-id');
+  const opt = sel.options[sel.selectedIndex];
+  document.getElementById('agenda-proc-id-display').value = sel.value;
+  if (opt && opt.dataset.vagas) document.getElementById('agenda-vagas').value = opt.dataset.vagas;
+}
+
+function openPaymentModal(inscId, vetId, vetNome) {
+  STATE.pendingPayment = { inscricao_id: inscId, veterinario_id: vetId, veterinario_nome: vetNome };
+  document.getElementById('pag-inscricao-id').value = inscId;
+  openModal('modal-pagamento');
+}
+
+async function confirmPayment() {
+  if (!STATE.pendingPayment) return;
+  const valor = document.getElementById('pag-valor').value;
+  const metodo = document.getElementById('pag-metodo').value;
+  if (!valor) { showToast('Informe o valor', true); return; }
+  
+  const result = await apiPost({ action: 'confirmarPagamento', ...STATE.pendingPayment, valor: parseFloat(valor), metodo });
+  if (result && result.success) {
+    showToast('Pagamento confirmado!');
+    closeModal('modal-pagamento');
+    loadInscricoes();
+    loadPagamentos();
+  } else {
+    showToast(result?.error || 'Erro', true);
+  }
+}
+
+async function confirmPresence(inscId) {
+  const result = await apiPost({ action: 'confirmarPresenca', inscricao_id: inscId });
+  if (result && result.success) { showToast('Presença confirmada!'); loadInscricoes(); }
+  else showToast(result?.error || 'Erro', true);
+}
+
+async function cancelInscricao(inscId) {
+  if (!confirm('Cancelar esta inscrição?')) return;
+  const result = await apiPost({ action: 'cancelarInscricao', inscricao_id: inscId });
+  if (result && result.success) { showToast('Inscrição cancelada'); loadInscricoes(); }
+  else showToast(result?.error || 'Erro', true);
+}
+
+function copyLink(agendaId) {
+  const url = `${window.location.origin}/vet-app.html?agenda=${agendaId}`;
+  navigator.clipboard.writeText(url).then(() => showToast('Link copiado!'));
+}
+
+async function approveVet(id) {
+  if (!confirm('Aprovar este veterinário? Ele poderá fazer login e check-in.')) return;
+  const result = await apiPost({ action: 'updateVetStatus', id: id, status: 'ativo' });
+  if (result && result.success) { showToast('Veterinário aprovado com sucesso!'); loadVeterinarios(); }
+  else showToast(result?.error || 'Erro ao aprovar', true);
+}
+async function deactivateVet(id) {
+  if (!confirm('Desativar este veterinário?')) return;
+  const result = await apiPost({ action: 'updateVetStatus', id: id, status: 'inativo' });
+  if (result && result.success) { showToast('Veterinário desativado.'); loadVeterinarios(); }
+  else showToast(result?.error || 'Erro ao desativar', true);
+}
+async function createProcedimento() {
+  const nome = document.getElementById('proc-nome').value.trim();
+  const cat  = document.getElementById('proc-cat').value;
+  const dur  = document.getElementById('proc-dur').value;
+  const vagas= document.getElementById('proc-vagas').value;
+  const preco= document.getElementById('proc-preco').value;
+  const nivel= document.getElementById('proc-nivel').value;
+  const desc = document.getElementById('proc-desc').value.trim();
+  if (!nome || !cat) { showToast('Preencha nome e categoria', true); return; }
+  const result = await apiPost({ action: 'criarProcedimento', nome, categoria: cat, duracao_minutos: parseInt(dur)||60, vagas_total: parseInt(vagas)||4, preco_avulso: parseFloat(preco)||150, nivel_complexidade: nivel, descricao: desc });
+  if (result && result.success) { showToast('Procedimento cadastrado!'); closeModal('modal-novo-proc'); loadProcedimentos(); }
+  else showToast(result?.error || 'Erro ao cadastrar', true);
+}
+
+// ── API Config ──
+function saveApiUrl() {
+  const url = document.getElementById('api-url-input').value.trim();
+  if (!url) { showToast('Cole a URL do Apps Script', true); return; }
+  STATE.apiUrl = url;
+  localStorage.setItem('vetexp_api_url', url);
+  updateApiStatus(true);
+  showToast('URL salva! Teste a conexão.');
+}
+
+async function testApi() {
+  const url = document.getElementById('api-url-input').value.trim();
+  if (!url) return;
+  STATE.apiUrl = url;
+  const el = document.getElementById('api-test-result');
+  el.textContent = '⏳ Testando...';
+  try {
+    const data = await apiGet('getStats');
+    if (data && data.success) {
+      el.innerHTML = '<span style="color:var(--mint)">✅ Conexão estabelecida com sucesso!</span>';
+      updateApiStatus(true);
+      loadDashboard();
+    } else {
+      el.innerHTML = '<span style="color:var(--rose)">❌ Erro: ' + (data?.error || 'Resposta inválida') + '</span>';
+      updateApiStatus(false);
+    }
+  } catch(e) {
+    el.innerHTML = '<span style="color:var(--rose)">❌ Falha na conexão. Verifique a URL.</span>';
+    updateApiStatus(false);
+  }
+}
+
+function updateApiStatus(ok) {
+  const el = document.getElementById('api-status');
+  const txt = document.getElementById('api-status-text');
+  if (ok) { el.classList.remove('offline'); txt.textContent = 'API conectada'; }
+  else { el.classList.add('offline'); txt.textContent = 'Sem API'; }
+}
+
+// ── Helpers ──
+function formatDate(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('pt-BR'); } catch(e) { return String(d); }
+}
+
+function statusBadge(s) {
+  const map = {
+    'ativo': ['badge-green', '● Ativo'],
+    'pendente': ['badge-amber', '⏳ Pendente'],
+    'inativo': ['badge-gray', '○ Inativo'],
+    'disponivel': ['badge-green', '✓ Disponível'],
+    'lotado': ['badge-amber', '● Lotado'],
+    'cancelado': ['badge-rose', '✕ Cancelado'],
+    'realizado': ['badge-gray', '✓ Realizado'],
+    'confirmado': ['badge-green', '✓ Confirmado'],
+    'pendente_pagamento': ['badge-amber', '💰 Ag. Pagamento'],
+    'presente': ['badge-blue', '✓ Presente'],
+    'ausente': ['badge-rose', '✕ Ausente'],
+  };
+  const [cls, label] = map[s] || ['badge-gray', s];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function catBadge(c) {
+  const map = { cirurgia: ['badge-rose','🔪 Cirurgia'], consulta: ['badge-green','🩺 Consulta'], emergencia: ['badge-amber','🚨 Emergência'], internacao: ['badge-blue','🛏 Internação'], diagnostico: ['badge-gray','📷 Diagnóstico'] };
+  const [cls, label] = map[c] || ['badge-gray', c];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function levelBadge(l) {
+  const map = { basico: ['badge-green','Básico'], intermediario: ['badge-amber','Interm.'], avancado: ['badge-rose','Avançado'] };
+  const [cls, label] = map[l] || ['badge-gray', l];
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+let toastTimer;
+function showToast(msg, error = false) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'show' + (error ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = '', 3500);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
